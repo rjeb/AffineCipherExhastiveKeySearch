@@ -23,6 +23,15 @@ public class Cipher {
 		this.keyB = d;
 	}
 	
+	private int modInverse(int x, int div) 
+    { 
+        int mod = x % div; 
+        for (int i = 1; i < div; i++) 
+           if ((mod * i) % div == 1) 
+              return i; 
+        return 1; 
+    } 
+	
 	public String genCipherText(String input) {
 		input = input.toLowerCase();
 		String returnString = "";
@@ -31,7 +40,11 @@ public class Cipher {
 			int charNum = (chars.indexOf(in));
 			//calculates ciphertext value of character
 			//using the affine cipher
-			charNum = ((keyA * charNum) + keyB) % 26;
+			charNum = ((modInverse(keyA, 26)) * (charNum - keyB)) % 26;
+			//correction for negative numbers from modulo
+			if (charNum < 0) {
+				charNum = 26 + charNum;
+			}
 			returnString += chars.get(charNum);
 		}
 		
